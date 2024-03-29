@@ -38,6 +38,13 @@ defmodule RetWeb.HubChannel do
     "maybe-nafr"
   ]
 
+  # yukit受け入れ先
+  def join("hub:" <> hub_sid, %{"profile" => "yukit_worker"} = _params, socket) do
+    socket
+    |> assign(:hub_sid, hub_sid)
+    {:ok, %{}, socket}
+  end
+
   def join("hub:" <> hub_sid, %{"profile" => profile, "context" => context} = params, socket) do
     hub =
       Hub
@@ -1318,6 +1325,11 @@ defmodule RetWeb.HubChannel do
       end
 
       Statix.increment("ret.channels.hub.joins.ok")
+
+      #ここに仕込む
+      if Registry.lookup(Ret.YukitRegistry, hub.hub_sid) == [] do
+        {:ok, _} = DynamicSupervisor.start_child(Ret.YukitSupervisor, {Ret.YukitWorker, {hub.hub_sid}})
+      end
 
       {:ok, response, socket}
     end
