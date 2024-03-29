@@ -60,7 +60,6 @@ defmodule Ret.Application do
     {:ok, _} = Logger.add_backend(Sentry.LoggerBackend)
 
     ws_opt = [url: "wss://hubs.local:4000/socket/websocket?vsn=2.0.0"]
-    ws_opt = [url: "wss://hubs.local:4000/socket/websocket?vsn=2.0.0"]
     children = [
       {DynamicSupervisor, name: Ret.YukitSupervisor, strategy: :one_for_one},
       {PhoenixClient.Socket, {ws_opt, name: PhoenixClient.Socket}},

@@ -15,7 +15,7 @@ defmodule Ret.YukitWorker do
       "hub:#{hub_sid}",
       %{"profile" => "yukit_worker"}
     )
-    {:ok, %{}}
+    {:ok, file}
   end
 
   # def handle_call({:join, session_id}, _from, files) do
@@ -24,26 +24,27 @@ defmodule Ret.YukitWorker do
   #   {:reply, :ok, files}
   # end
 
-  def handle_info(
-    %PhoenixClient.Message{
-      event: "nafr",
-      payload: %{"from_session_id" => session_id}
-    } = msg,
-    files
-  ) do
+  # def handle_info(
+  #   %PhoenixClient.Message{
+  #     event: "nafr",
+  #     payload: %{"from_session_id" => session_id}
+  #   } = msg,
+  #   files
+  # ) do
 
-    if Map.has_key?(files, session_id) do
-      file = Map.get(files, session_id)
-      IO.write(file, "#{inspect(msg)}\n")
-      {:noreply, files}
-    else
-      {:ok, file} = File.open("./logs/#{session_id}.log", [:write, :delayed_write])
-      files = Map.put(files, session_id, file)
-      IO.write(file, "#{inspect(msg)}\n")
-    end
-  end
+  #   if Map.has_key?(files, session_id) do
+  #     file = Map.get(files, session_id)
+  #     IO.write(file, "#{inspect(msg)}\n")
+  #     {:noreply, files}
+  #   else
+  #     {:ok, file} = File.open("./logs/#{session_id}.log", [:write, :delayed_write])
+  #     files = Map.put(files, session_id, file)
+  #     IO.write(file, "#{inspect(msg)}\n")
+  #   end
+  # end
 
-  def handle_info(_msg, files) do
-    {:noreply, files}
+  def handle_info(msg, file) do
+    IO.write(file, "#{inspect(msg)}\n")
+    {:noreply, file}
   end
 end
