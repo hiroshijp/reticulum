@@ -61,6 +61,7 @@ defmodule Ret.Application do
 
     ws_opt = [url: "wss://hubs.local:4000/socket/websocket?vsn=2.0.0"]
     children = [
+      {Phoenix.PubSub, [name: Ret.PubSub, adapter: Phoenix.PubSub.PG2, pool_size: 4]},
       Ret.Repo,
       RetWeb.Endpoint,
       RetWeb.Presence,
@@ -233,7 +234,6 @@ defmodule Ret.Application do
       {DynamicSupervisor, name: Ret.YukitSupervisor, strategy: :one_for_one},
       {PhoenixClient.Socket, {ws_opt, name: PhoenixClient.Socket}},
       {Registry, keys: :unique, name: Ret.YukitRegistry},
-      {Phoenix.PubSub, [name: Ret.PubSub, adapter: Phoenix.PubSub.PG2, pool_size: 4]}
     ]
 
     Supervisor.start_link(children, name: Ret.Supervisor, strategy: :one_for_one)
