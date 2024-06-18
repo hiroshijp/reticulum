@@ -59,7 +59,6 @@ defmodule Ret.Application do
     :ok = Ret.Statix.connect()
     {:ok, _} = Logger.add_backend(Sentry.LoggerBackend)
 
-    ws_opt = [url: "wss://hubs.local:4000/socket/websocket?vsn=2.0.0"]
     children = [
       {Phoenix.PubSub, [name: Ret.PubSub, adapter: Phoenix.PubSub.PG2, pool_size: 4]},
       Ret.Repo,
@@ -231,9 +230,9 @@ defmodule Ret.Application do
              ]
            ]}
       },
-      {DynamicSupervisor, name: Ret.YukitSupervisor, strategy: :one_for_one},
-      {PhoenixClient.Socket, {ws_opt, name: PhoenixClient.Socket}},
-      {Registry, keys: :unique, name: Ret.YukitRegistry},
+      {DynamicSupervisor, name: Ret.HubLoggerSupervisor, strategy: :one_for_one},
+      {PhoenixClient.Socket, {[url: "wss://localhost:4000/socket/websocket?vsn=2.0.0"], name: PhoenixClient.Socket}},
+      {Registry, keys: :unique, name: Ret.Registry},
     ]
 
     Supervisor.start_link(children, name: Ret.Supervisor, strategy: :one_for_one)

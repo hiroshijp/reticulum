@@ -25,6 +25,8 @@ defmodule RetWeb.HubChannel do
   alias RetWeb.{Presence, EntityView}
   alias RetWeb.Api.V1.{HubView}
 
+  require Logger
+
   intercept [
     "hub_refresh",
     "mute",
@@ -39,7 +41,7 @@ defmodule RetWeb.HubChannel do
   ]
 
   # yukit受け入れ先
-  def join("hub:" <> hub_sid, %{"profile" => "yukit_worker"} = _params, socket) do
+  def join("hub:" <> hub_sid, %{"profile" => "hub_logger"} = _params, socket) do
     socket
     |> assign(:hub_sid, hub_sid)
     {:ok, %{}, socket}
@@ -1327,8 +1329,8 @@ defmodule RetWeb.HubChannel do
       Statix.increment("ret.channels.hub.joins.ok")
 
       #ここに仕込む
-      if Registry.lookup(Ret.YukitRegistry, hub.hub_sid) == [] do
-        {:ok, _} = DynamicSupervisor.start_child(Ret.YukitSupervisor, {Ret.YukitWorker, {hub.hub_sid}})
+      if Registry.lookup(Ret.Registry, hub.hub_sid) == [] do
+        {:ok, _} = DynamicSupervisor.start_child(Ret.HubLoggerSupervisor, {Ret.HubLogger, {hub.hub_sid}})
       end
 
       {:ok, response, socket}
