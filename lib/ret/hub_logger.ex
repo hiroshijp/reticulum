@@ -7,7 +7,7 @@ defmodule Ret.HubLogger do
 
   def start_link({hub_sid}) do
     name = {:via, Registry, {Ret.Registry, "#{hub_sid}"}}
-    GenServer.start_link(__MODULE__, {hub_sid}, name: name)
+    GenServer.start_link(__MODULE__, {hub_sid}, name: name, [timeout: @idle_timeout])
   end
 
   def init({hub_sid}) do
