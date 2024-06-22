@@ -40,7 +40,7 @@ defmodule RetWeb.HubChannel do
     "maybe-nafr"
   ]
 
-  # yukit受け入れ先
+  # HubLogger受け入れ先
   def join("hub:" <> hub_sid, %{"profile" => "hub_logger"} = _params, socket) do
     socket
     |> assign(:hub_sid, hub_sid)

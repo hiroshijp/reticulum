@@ -235,6 +235,7 @@ defmodule Ret.Application do
       {Registry, keys: :unique, name: Ret.Registry},
     ]
 
+
     Supervisor.start_link(children, name: Ret.Supervisor, strategy: :one_for_one)
   end
 
