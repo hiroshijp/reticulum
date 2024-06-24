@@ -4,8 +4,7 @@ defmodule Ret.HubLogger do
 
   require Logger
 
-  # TODO: 本当に60秒か要検証
-  @timeout_interval 60_000
+  @timeout_interval 100000
 
   def start_link({hub_sid}) do
     name = {:via, Registry, {Ret.Registry, "#{hub_sid}"}}
