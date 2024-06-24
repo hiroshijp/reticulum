@@ -1,4 +1,4 @@
-name: ce-reticulum
+name: reticulum
 
 on:
   workflow_dispatch:
