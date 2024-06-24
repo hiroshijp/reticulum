@@ -13,29 +13,39 @@ defmodule Ret.HubLogger do
 
   def init({hub_sid}) do
     {:ok, file} = File.open("./logs/#{hub_sid}.log", [:write, :delayed_write])
+
+    # make hub logger join to hub channel
     {:ok, _res, _channel} = PhoenixClient.Channel.join(
       Socket,
       "hub:#{hub_sid}",
       %{"profile" => "hub_logger"}
     )
-    {:ok, {hub_sid, file}}
+
+    mew_timer = set_timer(@timeout_interval)
+
+    {:ok, [hub_sid, file, new_imer]}
   end
 
-  def handle_info(:timeout, {hub_sid, file}) do
-    {:stop, :timeout, {hub_sid, file}}
+  # handle timeout
+  def handle_info(:timeout, [hub_sid, file, new_imer]) do
+    {:stop, :timeout, [hub_sid, file, new_imer]}
   end
 
-  def handle_info(msg, {hub_sid, file}) do
-    IO.write(file, "#{inspect(hub_sid)}: #{inspect(msg)}\n")
-    {:noreply, {hub_sid, file}}
+  # hundale all messages
+  def handle_info(msg, [hub_sid, file, new_imer]) do
+    IO.write(file, "#{inspect(msg)}\n")
+    new_imer = set_timer(@timeout_interval)
+    {:noreply, [hub_sid, file, new_imer]}
   end
 
-  def terminate(reason, {hub_sid, file}) do
-    Logger.info("miyoshi")
-
+  def terminate(reason, [hub_sid, file, new_imer]) do
     IO.write(file, "reason: #{reason} Terminated\n")
     File.close(file)
     Registry.unregister(Ret.Registry, hub_sid)
     {:shutdown, reason}
+  end
+
+  defp set_timer(timeout_interval) do
+    new_imer = Process.send_after(self(), :timeout, timeout_interval)
   end
 end
