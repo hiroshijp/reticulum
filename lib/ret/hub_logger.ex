@@ -12,6 +12,7 @@ defmodule Ret.HubLogger do
   end
 
   def init({hub_sid}) do
+    File.mkdir_p!("/storage/logs")
     {:ok, file} = File.open("/storage/logs/#{hub_sid}.log", [:write, :delayed_write, :append])
     IO.write(file, "Start logging for hub: #{hub_sid}\n")
 
