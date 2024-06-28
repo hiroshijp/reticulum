@@ -7,6 +7,7 @@ defmodule Ret.PageOriginWarmer do
            hubs: ~w(
              index.html
              whats-new.html
+             sample.html
              hub.html
              link.html
              scene.html
