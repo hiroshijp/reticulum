@@ -53,6 +53,7 @@ defmodule RetWeb.Api.V1.HubView do
             end,
           member_permissions: hub |> Hub.member_permissions_for_hub(),
           room_size: hub |> Hub.room_size_for(),
+          allow_hub_logger: hub.allow_hub_logger,
           member_count: hub |> Hub.member_count_for(),
           lobby_count: hub |> Hub.lobby_count_for()
         }
@@ -86,6 +87,7 @@ defmodule RetWeb.Api.V1.HubView do
           ],
           member_permissions: hub |> Hub.member_permissions_for_hub(),
           room_size: hub |> Hub.room_size_for(),
+          allow_hub_logger: hub.allow_hub_logger,
           member_count: hub |> Hub.member_count_for(),
           lobby_count: hub |> Hub.lobby_count_for()
         }

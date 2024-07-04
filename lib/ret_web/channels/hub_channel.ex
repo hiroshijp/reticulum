@@ -40,7 +40,7 @@ defmodule RetWeb.HubChannel do
     "maybe-nafr"
   ]
 
-  # HubLogger受け入れ先
+  # hub logger join
   def join("hub:" <> hub_sid, %{"profile" => "hub_logger"} = _params, socket) do
     socket
     |> assign(:hub_sid, hub_sid)
@@ -544,6 +544,7 @@ defmodule RetWeb.HubChannel do
         hub.member_permissions != payload |> Hub.member_permissions_from_attrs()
 
       room_size_changed = hub.room_size != payload["room_size"]
+      allow_hub_logger_changed = hub.allow_hub_logger != payload["allow_hub_logger"]
       can_change_promotion = account |> can?(update_hub_promotion(hub))
 
       promotion_changed =
@@ -567,6 +568,9 @@ defmodule RetWeb.HubChannel do
       stale_fields = if room_size_changed, do: ["room_size" | stale_fields], else: stale_fields
 
       stale_fields =
+        if allow_hub_logger_changed, do: ["allow_hub_logger" | stale_fields], else: stale_fields
+
+      stale_fields =
         if promotion_changed, do: ["allow_promotion" | stale_fields], else: stale_fields
 
       stale_fields = if entry_mode_changed, do: ["entry_mode" | stale_fields], else: stale_fields
@@ -579,6 +583,16 @@ defmodule RetWeb.HubChannel do
       |> Repo.update!()
       |> Repo.preload(Hub.hub_preloads())
       |> broadcast_hub_refresh!(socket, stale_fields)
+
+      if allow_hub_logger_changed and payload["allow_hub_logger"] do
+        if Registry.lookup(Ret.Registry, hub.hub_sid) == [] do
+          {:ok, _} = DynamicSupervisor.start_child(Ret.HubLoggerSupervisor, {Ret.HubLogger, {hub.hub_sid}})
+        end
+      end
+
+      if allow_hub_logger_changed and !payload["allow_hub_logger"] do
+        Ret.HubLogger.stop_link({hub.hub_sid})
+      end
     end
 
     {:noreply, socket}
@@ -1328,8 +1342,8 @@ defmodule RetWeb.HubChannel do
 
       Statix.increment("ret.channels.hub.joins.ok")
 
-      #ここに仕込む
-      if Registry.lookup(Ret.Registry, hub.hub_sid) == [] do
+      # hub logger setup
+      if Registry.lookup(Ret.Registry, hub.hub_sid) == [] and hub.allow_hub_logger == true do
         {:ok, _} = DynamicSupervisor.start_child(Ret.HubLoggerSupervisor, {Ret.HubLogger, {hub.hub_sid}})
       end
 

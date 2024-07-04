@@ -103,6 +103,7 @@ defmodule Ret.Hub do
     field :entry_mode, Ret.Hub.EntryMode
     field :user_data, :map
     field :allow_promotion, :boolean
+    field :allow_hub_logger, :boolean
     field :room_size, :integer
 
     belongs_to :created_by_account, Ret.Account, references: :account_id
@@ -416,7 +417,7 @@ defmodule Ret.Hub do
 
   def add_attrs_to_changeset(changeset, attrs) do
     changeset
-    |> cast(attrs, [:name, :description, :user_data, :room_size])
+    |> cast(attrs, [:name, :description, :user_data, :room_size, :allow_hub_logger])
     |> validate_required([:name])
     |> validate_length(:name, max: 64)
     |> validate_length(:description, max: 64_000)
