@@ -44,3 +44,5 @@ log
 .vscode
 
 /logs
+
+/.elixir_ls

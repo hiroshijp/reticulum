@@ -47,6 +47,19 @@ defmodule RetWeb.HubChannel do
     {:ok, %{}, socket}
   end
 
+  # retc join
+  def join("hub:" <> hub_sid, %{"profile" => "retc"} = _params, socket) do
+    socket
+    |> assign(:hub_sid, hub_sid)
+    {:ok, %{}, socket}
+  end
+
+  # retc msg
+  def handle_in("retc_event", message, socket) do
+    broadcast!(socket, "retc_event", message )
+    {:reply, {:ok, message}, socket}
+  end
+
   def join("hub:" <> hub_sid, %{"profile" => profile, "context" => context} = params, socket) do
     hub =
       Hub
