@@ -197,7 +197,8 @@ defmodule RetWeb.Plugs.AddCSP do
         ret_direct_connect,
         storage_url,
         thumbnail_url,
-        "https://raw.githubusercontent.com"
+        "https://raw.githubusercontent.com",
+        "https://hcce-observer-955595017457.us-central1.run.app"
       ],
       "img-src" => [
         "'self'",
