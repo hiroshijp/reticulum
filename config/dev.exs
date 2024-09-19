@@ -145,7 +145,7 @@ asset_hosts =
   "https://localhost:4000 https://localhost:8080 http://localhost:3000 " <>
     "https://#{host}:4000 https://#{host}:8080 https://#{host}:3000 https://#{host}:8989 https://#{host}:9090 https://#{cors_proxy_host}:4000 " <>
     "https://assets-prod.reticulum.io https://asset-bundles-dev.reticulum.io https://asset-bundles-prod.reticulum.io https://belivvr.github.io " <>
-    "https://hcce-observer-955595017457.us-central1.run.app " #domain for hcce-observer
+    "https://hcce-observer-955595017457.us-central1.run.app" #domain for hcce-observer
 
 websocket_hosts =
   "https://localhost:4000 https://localhost:8080 wss://localhost:4000 " <>
