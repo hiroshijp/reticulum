@@ -198,7 +198,8 @@ defmodule RetWeb.Plugs.AddCSP do
         storage_url,
         thumbnail_url,
         "https://raw.githubusercontent.com",
-        "https://hcce-observer-955595017457.us-central1.run.app"
+        "https://hcce-observer-955595017457.us-central1.run.app",
+        "https://pub-4f0dedea679345d4bac7dfcf7b6aa95a.r2.dev"
       ],
       "img-src" => [
         "'self'",
@@ -225,7 +226,8 @@ defmodule RetWeb.Plugs.AddCSP do
         cors_proxy_url,
         custom_rules[:media_src],
         storage_url,
-        thumbnail_url
+        thumbnail_url,
+        "https://pub-4f0dedea679345d4bac7dfcf7b6aa95a.r2.dev"
       ],
       "frame-src" => [
         "'self'",
